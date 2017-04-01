@@ -2,7 +2,7 @@
 {  
   "manifest_version":2,
   "name": "Groopen",  
-  "version": "0.3.0", 
+  "version": "0.5.0", 
   "description": "Group websites and batch-open them!",
   "options_page":"options.html",
   "permissions":["tabs","storage","http://*/"],

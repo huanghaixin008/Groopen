@@ -49,16 +49,22 @@ var FrontManager = {
 	addCurrent: function(index) {
 		chrome.tabs.query({active: true}, function(tabs){
 				var url = tabs[0].url;
-				console.log(url);
 				if (url.substring(0,7) != "http://" && url.substring(0,8) != "https://") 
 					url = "http://" + url;
 		
 				var numb = parseInt(window.localStorage.getItem('group' + index + 'numb'));
 				// duplicate check
-				for (var i=0;i<numb;i++) {
-					var turl = window.localStorage.getItem('group' + index + ':' + i);
-					if (turl === url)
-						return;
+				var alwduplicatechecked = window.localStorage.getItem('alwduplicatecheck');
+				if (alwduplicatechecked == null) {
+					alwduplicatechecked = 0;
+					window.localStorage.setItem('alwduplicatecheck', '' + alwduplicatechecked)
+				} else alwduplicatechecked = parseInt(alwduplicatechecked);
+				if (!alwduplicatechecked) {
+					for (var i=0;i<numb;i++) {
+						var turl = window.localStorage.getItem('group' + index + ':' + i);
+						if (turl === url)
+							return;
+					}
 				}
 				window.localStorage.setItem('group' + index + ':' + numb, url);
 				numb++;
@@ -71,23 +77,22 @@ var FrontManager = {
 	},
 
 	open: function(index) {
+		var clrallchecked = window.localStorage.getItem('clrallcheck');
+		if (clrallchecked == null) {
+			clrallchecked = 0;
+			window.localStorage.setItem('clrallcheck', '' + clrallchecked)
+		} else clrallchecked = parseInt(clrallchecked);
 		var numb = window.localStorage.getItem('group'+ index +'numb');
-		for (var i = 0;i < numb;i++) {
-			var target_url = window.localStorage.getItem('group'+ index +':' + i);
-			/*
-			var exist = false;
-			chrome.tabs.query({}, function(tabs){
-				for (let t of tabs){
-					console.log("1." + t.url);
-					console.log("2." + target_url);
-					if (t.url == target_url) {
-						exist = true;
-						return;
-					}
-				}
-			});*/
-			chrome.tabs.create({url:target_url,selected:false});
-		}
+		chrome.tabs.query({}, function(tabs){
+			if (clrallchecked) {
+				for (let t of tabs)
+					chrome.tabs.remove(t.id);
+			}
+			for (var i = 0;i < numb;i++) {
+				var target_url = window.localStorage.getItem('group'+ index +':' + i);
+				chrome.tabs.create({url:target_url,selected:false});
+			}
+		});
 	}
 };
 

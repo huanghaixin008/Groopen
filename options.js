@@ -8,35 +8,67 @@ var GroupManager = {
 	init: function() {  // display all groups and urls
 		// Options div
 		var opndiv = $('Options');
+		/*
 		var opnp = document.createElement('h2');
 		opnp.setAttribute('id', 'optionsp');
 		opnp.innerHTML += "Options";
 		var opnpdiv = document.createElement('div');
 		opnpdiv.setAttribute('id', 'optionpdiv');
 		opnpdiv.appendChild(opnp);
-		opndiv.appendChild(opnpdiv);
+		opndiv.appendChild(opnpdiv); */
+		// checkboxes
+		var checkboxdiv = $("checkboxes");
+		var clrallcheck = document.createElement('input');
+		clrallcheck.setAttribute("type","checkbox");
+		clrallcheck.setAttribute("id", "clrallcheck");
+		clrallcheck.addEventListener('click', function(){ GroupManager.clrallcheck(); }, false);
+		var clrallchecked = window.localStorage.getItem('clrallcheck');
+		if (clrallchecked == null) {
+			clrallchecked = 0;
+			window.localStorage.setItem('clrallcheck', '' + clrallchecked)
+		} else clrallchecked = parseInt(clrallchecked);
+		var boxlabel = document.createElement("label");
+		//boxlabel.appendChild(clrallcheck);
+		boxlabel.innerHTML += "Close all tabs before opening a group";
+		if (clrallchecked)
+			clrallcheck.setAttribute("checked", "true");
+		checkboxdiv.appendChild(clrallcheck);
+		checkboxdiv.appendChild(boxlabel);
+		checkboxdiv.appendChild(document.createElement('br'));
+
+		var alwduplicatecheck = document.createElement('input');
+		alwduplicatecheck.setAttribute("type","checkbox");
+		alwduplicatecheck.setAttribute("id", "alwduplicatecheck");
+		alwduplicatecheck.addEventListener('click', function(){ GroupManager.alwduplicatecheck(); }, false);
+		var alwduplicatechecked = window.localStorage.getItem('alwduplicatecheck');
+		if (alwduplicatechecked == null) {
+			alwduplicatechecked = 0;
+			window.localStorage.setItem('alwduplicatecheck', '' + alwduplicatechecked)
+		} else alwduplicatechecked = parseInt(alwduplicatechecked);
+		var boxlabel2 = document.createElement("label");
+		//boxlabel2.appendChild(alwduplicatecheck);
+		boxlabel2.innerHTML += "Allow duplication website when adding website by button '+'";
+		if (alwduplicatechecked)
+			alwduplicatecheck.setAttribute("checked", "true");
+		checkboxdiv.appendChild(alwduplicatecheck);
+		checkboxdiv.appendChild(boxlabel2);
+
+		var btndiv = $("buttons");
 		var newgrpbtn = document.createElement('input');
 		newgrpbtn.setAttribute("type","button");
 		newgrpbtn.setAttribute("value","New Group");
 		newgrpbtn.setAttribute("id",'newgroup');
 		newgrpbtn.addEventListener('click', function(){GroupManager.newGroup();}, false);
-		opndiv.appendChild(newgrpbtn);  // the new group button
+		btndiv.appendChild(newgrpbtn);  // the new group button
 		var clrgrpbtn = document.createElement('input');
 		clrgrpbtn.setAttribute("type","button");
 		clrgrpbtn.setAttribute("value","Clear Group");
 		clrgrpbtn.setAttribute("id",'clrgroup');
 		clrgrpbtn.addEventListener('click', function(){GroupManager.clearGroup();}, false);
-		opndiv.appendChild(clrgrpbtn);  // clear group button
+		btndiv.appendChild(clrgrpbtn);  // clear group button
+
 		// Groups div
 		var grpdiv = $('Groups');
-		var grpp = document.createElement('h2');
-		grpp.setAttribute('id', 'groupsp');
-		grpp.innerHTML += "Groups";
-		var grppdiv = document.createElement('div');
-		grppdiv.setAttribute('id', 'grouppdiv');
-		grppdiv.appendChild(grpp);
-		grpdiv.appendChild(grppdiv);
-
 		var grpNumb = parseInt(window.localStorage.getItem('totalnumb'));
 		var nullp = document.createElement('p');
 		nullp.setAttribute("id","null");
@@ -74,7 +106,7 @@ var GroupManager = {
 			btn3.addEventListener('click', function(obj){ var n = parseInt(obj.target.id.replace(/[^0-9]/ig,""));
 														  GroupManager.addURL(n);}, false);  // add URL button
 
-			div.appendChild(p);			
+			div.appendChild(p);		
 			div.appendChild(btn3);		
 			div.appendChild(btn2);			
 			div.appendChild(btn1);  
@@ -412,6 +444,18 @@ var GroupManager = {
 		window.localStorage.setItem('group' + index1 + ":" + index2, url);		
 		var p = $('group' + index1 + ":" + index2);  // edit url displayed
 		p.innerHTML = url;
+	},
+
+	clrallcheck: function() {
+		var clrallchecked = parseInt(window.localStorage.getItem('clrallcheck'));
+		clrallchecked = 1 - clrallchecked;
+		window.localStorage.setItem('clrallcheck', '' + clrallchecked);
+	},
+
+	alwduplicatecheck: function() {
+		var alwduplicatechecked = parseInt(window.localStorage.getItem('alwduplicatecheck'));
+		alwduplicatechecked = 1 - alwduplicatechecked;
+		window.localStorage.setItem('alwduplicatecheck', '' + alwduplicatechecked);
 	}
 };
 
@@ -419,12 +463,13 @@ document.addEventListener('DOMContentLoaded', function() {
 	GroupManager.init();  
 }); 
 
-
 /*
 localStorage存的东西： 
 1. totalnumb，group的个数
 2. group+index+numb，第index个group的url数
 3. group+index1+：+index2，第index1个group中的第index2个url
+
+chrome.tabs.remove(tabs[i].id); 
 */
 
 // TODO cannot assure no repeating groupname now
