@@ -85,8 +85,10 @@ var FrontManager = {
 		var numb = window.localStorage.getItem('group'+ index +'numb');
 		chrome.tabs.query({}, function(tabs){
 			if (clrallchecked) {
-				for (let t of tabs)
-					chrome.tabs.remove(t.id);
+				for (let t of tabs) {
+                    if (t.url != "chrome://newtab/")
+						chrome.tabs.remove(t.id);
+				}
 			}
 			for (var i = 0;i < numb;i++) {
 				var target_url = window.localStorage.getItem('group'+ index +':' + i);
